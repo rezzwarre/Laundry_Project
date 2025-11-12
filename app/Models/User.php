@@ -2,31 +2,29 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Kolom yang boleh diisi (mass assignable).
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
         'password',
+        'nama',
+        'alamat',
+        'no_hp',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Kolom yang disembunyikan saat data di-serialize (misalnya ke JSON).
      */
     protected $hidden = [
         'password',
@@ -34,15 +32,27 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Konversi otomatis tipe data tertentu.
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'hashed', // otomatis hash saat diset
         ];
     }
+
+    /**
+     * Mengubah kolom autentikasi dari 'email' menjadi 'username'.
+     * (Opsional — hanya jika kamu pakai sistem login bawaan Laravel)
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'username';
+    }
+
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'id_user');
+    }
+    
 }
