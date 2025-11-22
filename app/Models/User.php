@@ -34,12 +34,7 @@ class User extends Authenticatable
     /**
      * Konversi otomatis tipe data tertentu.
      */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed', // otomatis hash saat diset
-        ];
-    }
+    
 
     /**
      * Mengubah kolom autentikasi dari 'email' menjadi 'username'.

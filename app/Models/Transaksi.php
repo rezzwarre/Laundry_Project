@@ -11,14 +11,20 @@ class Transaksi extends Model
     protected $table = 'transaksis';
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
+    // protected $fillable = [
+    //     'id_user',
+    //     'id_jasa',
+    //     'jumlah_barang',
+    //     'total_harga',
+    //     'tanggal_terima',
+    //     'tanggal_selesai',
+    //     'status_pengerjaan'
+    // ];
+
     protected $fillable = [
-        'id_user',
-        'id_jasa',
-        'jumlah_barang',
-        'total_harga',
-        'tanggal_terima',
-        'tanggal_selesai',
-        'status_pengerjaan'
+        'kode_invoice', 'id_user', 'id_jasa', 'jumlah_barang', 
+        'total_harga', 'status_pembayaran', 'tanggal_terima', 
+        'tanggal_selesai', 'status_pengerjaan'
     ];
     
     public function user()

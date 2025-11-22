@@ -16,26 +16,40 @@ class Jenis_jasaSeeder extends Seeder
     {
         DB::table('jenis_jasas')->insert([
             [
-                'jenis_jasa' => 'Cuci Kering',
-                'jenis_barang' => 'Baju',
-                'harga' => 5000,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'jenis_jasa' => 'Cuci Setrika',
-                'jenis_barang' => 'Selimut',
-                'harga' => 10000,
+                'jenis_barang' => 'Pakaian',
+                'harga' => 8000,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'jenis_jasa' => 'Setrika Saja',
-                'jenis_barang' => 'Celana',
-                'harga' => 3000,
+                'jenis_jasa' => 'Cuci Kering',
+                'jenis_barang' => 'Pakaian',
+                'harga' => 6000,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
+            [
+                'jenis_jasa' => 'Dry Clean',
+                'jenis_barang' => 'Jas',
+                'harga' => 25000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'jenis_jasa' => 'Laundry Kilat',
+                'jenis_barang' => 'Pakaian',
+                'harga' => 12000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'jenis_jasa' => 'Cuci',
+                'jenis_barang' => 'Sepatu',
+                'harga' => 20000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
 
 
