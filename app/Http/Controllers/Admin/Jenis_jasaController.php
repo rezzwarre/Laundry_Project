@@ -33,6 +33,7 @@ class Jenis_jasaController extends Controller
         $validatedData = $request->validate([
             'jenis_jasa' => 'required|string|max:255',
             'jenis_barang' => 'required|string|max:255',
+            'kategori' => 'required|in:jumlah,berat',
             'harga' => 'required|integer|min:0',
         ]);
 
@@ -69,6 +70,7 @@ class Jenis_jasaController extends Controller
         $request->validate([
             'jenis_jasa'   => 'required|string|max:255',
             'jenis_barang' => 'required|string|max:255',
+            'kategori' => 'required|in:jumlah,berat',
             'harga'        => 'required|numeric|min:0',
         ]);
 
@@ -79,6 +81,7 @@ class Jenis_jasaController extends Controller
         $jenis_jasa->update([
             'jenis_jasa'   => $request->jenis_jasa,
             'jenis_barang' => $request->jenis_barang,
+            'kategori' => $request->kategori,
             'harga'        => $request->harga,
         ]);
 

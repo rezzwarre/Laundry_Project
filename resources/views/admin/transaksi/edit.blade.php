@@ -18,6 +18,7 @@
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Status Pengerjaan</label>
                         <select name="status_kerja" class="form-control form-select">
+                            {{-- Perbaikan: Sesuaikan dengan nama kolom yang benar jika berbeda, asumsikan 'status_pengerjaan' --}}
                             @foreach(['Menunggu', 'Diproses', 'Selesai', 'Diambil'] as $status)
                                 <option value="{{ $status }}" 
                                     {{ old('status_kerja', $transaksi->status_pengerjaan) == $status ? 'selected' : '' }}>
@@ -30,6 +31,7 @@
                     {{-- Status Pembayaran --}}
                     <div class="mb-3">
                         <label class="form-label font-weight-bold">Status Pembayaran</label>
+                        {{-- Perbaikan: Sesuaikan dengan nama kolom yang benar jika berbeda, asumsikan 'status_pembayaran' --}}
                         <select name="status_bayar" class="form-control form-select">
                             <option value="Belum Lunas" {{ old('status_bayar', $transaksi->status_pembayaran) == 'Belum Lunas' ? 'selected' : '' }}>Belum Lunas</option>
                             <option value="Lunas" {{ old('status_bayar', $transaksi->status_pembayaran) == 'Lunas' ? 'selected' : '' }}>Lunas</option>
@@ -59,8 +61,12 @@
                             <label class="form-label">Pilih Layanan (Jasa)</label>
                             <select name="id_jasa" id="select-jasa" class="form-control form-select @error('id_jasa') is-invalid @enderror">
                                 @foreach($services as $jasa)
-                                    <option value="{{ $jasa->id }}" data-harga="{{ $jasa->harga }}"
-                                        {{ old('id_jasa', $transaksi->id_jasa) == $jasa->id ? 'selected' : '' }}>
+                                    {{-- MODIFIKASI: Menambahkan data-harga, data-satuan, dan data-kategori --}}
+                                    <option value="{{ $jasa->id }}" 
+                                            data-harga="{{ $jasa->harga }}"
+                                            data-satuan="{{ $jasa->jenis_barang }}"
+                                            data-kategori="{{ strtolower($jasa->kategori) }}" 
+                                            {{ old('id_jasa', $transaksi->id_jasa) == $jasa->id ? 'selected' : '' }}>
                                         {{ $jasa->jenis_jasa }} - Rp{{ number_format($jasa->harga, 0, ',', '.') }}/{{ $jasa->jenis_barang }}
                                     </option>
                                 @endforeach
@@ -69,14 +75,44 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Jumlah / Berat</label>
-                            <input type="number" name="jumlah_barang" id="input-jumlah" class="form-control @error('jumlah_barang') is-invalid @enderror" value="{{ old('jumlah_barang', $transaksi->jumlah_barang) }}" min="1">
+                            {{-- Menghapus min="1" dan step agar diatur oleh JS --}}
+                            <input type="number" name="jumlah_barang" id="input-jumlah" 
+                                class="form-control @error('jumlah_barang') is-invalid @enderror" 
+                                value="{{ old('jumlah_barang', $transaksi->jumlah_barang) }}">
+                            {{-- Menambahkan ID untuk pesan satuan dinamis --}}
+                            <small id="satuan-info" class="text-muted">Satuan dan input akan diatur otomatis.</small>
+                            @error('jumlah_barang') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                         </div>
                     </div>
                     
+                    {{-- Input Hidden untuk Total Harga --}}
+                    <input type="hidden" name="total_harga" id="input-total-harga" value="{{ old('total_harga', $transaksi->total_harga) }}">
+
                     <div class="alert alert-info d-flex justify-content-between align-items-center">
-                        <span>Harga akan dihitung ulang otomatis saat disubmit. Estimasi:</span>
+                        <span>Total Harga Saat Ini (Estimasi Perubahan):</span>
+                        {{-- Mengatur nilai awal tampilan harga ke total harga dari DB --}}
                         <h3 class="mb-0 font-weight-bold" id="tampilan-harga">Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</h3>
                     </div>
+
+                    <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">deskripsi Lengkap</label>
+                            <textarea 
+                                class="form-control @error('description') is-invalid @enderror" 
+                                id="description" 
+                                name="description" 
+                                rows="6" 
+                                placeholder="Jelaskan detail layanan Anda, misalnya: Syarat & Ketentuan, durasi, dll."
+                                required
+                            >{{ old('description', $transaksi->description ?? '') }}</textarea>
+                            
+                            {{-- Penanganan Error untuk field description --}}
+                            @error('description')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            <div class="form-text">Maksimal 1000 karakter.</div>
+                        </div>
 
                     <div class="mb-3">
                         <label class="form-label">Tanggal Terima</label>
@@ -93,24 +129,96 @@
     </div>
 </div>
 
-{{-- Script JS yang sama dari Create untuk kalkulasi dinamis --}}
+{{-- Script JS yang sama dari Create untuk kalkulasi dinamis, DENGAN PERBAIKAN --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const selectJasa = document.getElementById('select-jasa');
         const inputJumlah = document.getElementById('input-jumlah');
         const tampilanHarga = document.getElementById('tampilan-harga');
+        const satuanInfo = document.getElementById('satuan-info');
+        const inputTotalHarga = document.getElementById('input-total-harga');
 
         function hitungHarga() {
-            const hargaSatuan = selectJasa.options[selectJasa.selectedIndex].getAttribute('data-harga') || 0;
-            const jumlah = inputJumlah.value || 0;
-            const total = hargaSatuan * jumlah;
+            const selectedOption = selectJasa.options[selectJasa.selectedIndex];
+            const hargaSatuan = parseFloat(selectedOption.getAttribute('data-harga')) || 0;
+            let jumlah = parseFloat(inputJumlah.value) || 0;
+            
+            // Deklarasikan 'total' di awal fungsi
+            let total = 0; 
+            
+            // Pastikan input jumlah valid sebelum menghitung
+            if (inputJumlah.disabled || isNaN(jumlah)) {
+                total = 0;
+            } else {
+                const kategori = (selectedOption.getAttribute('data-kategori') || '').toLowerCase();
+                
+                // Jika kategori adalah 'jumlah', bulatkan input ke integer
+                if (kategori === 'jumlah') {
+                    jumlah = Math.round(jumlah);
+                    // Update input field agar user melihat nilai bulat
+                    inputJumlah.value = jumlah;
+                }
+                
+                // Hitung total
+                total = hargaSatuan * jumlah;
+                
+                // Pembulatan ke dua desimal untuk total harga
+                total = Math.round(total * 100) / 100;
+            }
+            
+            // Format Rupiah untuk tampilan
             tampilanHarga.innerText = "Rp " + new Intl.NumberFormat('id-ID').format(total);
+            
+            // Kirim nilai total harga murni (desimal) ke input hidden untuk Controller
+            inputTotalHarga.value = total;
         }
-        // Pastikan harga awal terhitung saat halaman dimuat
-        hitungHarga(); 
 
-        selectJasa.addEventListener('change', hitungHarga);
+        function updateInputKondisional() {
+            const selectedOption = selectJasa.options[selectJasa.selectedIndex];
+            const kategori = (selectedOption.getAttribute('data-kategori') || '').toLowerCase();
+            const satuan = selectedOption.getAttribute('data-satuan') || ''; 
+            
+            // Set inputJumlah.disabled ke false sebelum mengatur atribut lain
+            inputJumlah.disabled = false; 
+
+            if (kategori === 'berat') {
+                // Kategori Berat: Boleh Desimal (0.01 Kg)
+                inputJumlah.setAttribute('step', '0.01');
+                inputJumlah.setAttribute('min', '0.01');
+                satuanInfo.textContent = `Satuan: ${satuan} (Contoh: 1.5 ${satuan}). Boleh desimal.`;
+                
+                // Atur nilai default/minimum
+                if (parseFloat(inputJumlah.value) < 0.01) {
+                    inputJumlah.value = '1.00';
+                }
+            } else if (kategori === 'jumlah') {
+                // Kategori Jumlah: Hanya Integer
+                inputJumlah.setAttribute('step', '1');
+                inputJumlah.setAttribute('min', '1');
+                satuanInfo.textContent = `Satuan: ${satuan} (Contoh: 2 ${satuan}). Hanya bilangan bulat.`;
+                
+                // Pastikan nilai di input adalah integer positif
+                inputJumlah.value = Math.max(1, Math.round(parseFloat(inputJumlah.value) || 1));
+                
+            } else {
+                // Jika tidak ada jasa yang terpilih (meskipun di edit harusnya ada)
+                inputJumlah.disabled = true;
+                inputJumlah.value = '0';
+                inputJumlah.setAttribute('step', '1');
+                inputJumlah.setAttribute('min', '0');
+                satuanInfo.textContent = 'Pilih layanan untuk mengaktifkan input.';
+            }
+            
+            // WAJIB: Hitung harga setelah input disesuaikan
+            hitungHarga(); 
+        }
+
+        // --- Event Listeners ---
+        selectJasa.addEventListener('change', updateInputKondisional);
         inputJumlah.addEventListener('input', hitungHarga);
+        
+        // Panggil inisialisasi pada saat halaman dimuat
+        updateInputKondisional();
     });
 </script>
 @endsection

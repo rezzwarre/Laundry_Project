@@ -48,6 +48,7 @@ class UserController extends Controller
             
             // Alamat Wajib diisi
             'alamat' => ['required', 'string'],
+            
         ]);
 
         // 2. Simpan Pembaruan Data

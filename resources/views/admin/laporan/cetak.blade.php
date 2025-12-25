@@ -138,8 +138,15 @@
                     <td>{{ $trx->kode_invoice }}</td>
                     <td>{{ \Carbon\Carbon::parse($trx->tanggal_terima)->format('d/m/Y') }}</td>
                     {{-- Perbaikan: Mengganti $trx->user->nama menjadi $trx->user->name --}}
-                    <td>{{ $trx->user->name ?? 'N/A' }}</td>
-                    <td>{{ $trx->jasa->jenis_jasa ?? 'N/A' }} ({{ $trx->jumlah_barang }})</td>
+                    <td>{{ $trx->user->nama ?? 'N/A' }}</td>
+                    <td>{{ $trx->jasa->jenis_jasa ?? 'N/A' }} <strong>
+                            {{ $trx->jumlah_barang }}
+                            @if ($trx->jasa->kategori == 'berat')
+                                Kg
+                            @elseif ($trx->jasa->kategori == 'jumlah')
+                                Pcs
+                            @endif
+                        </strong></td>
                     <td class="text-right">Rp{{ number_format($trx->total_harga, 0, ',', '.') }}</td>
                     <td class="text-center">{{ $trx->status_pembayaran == 'Lunas' ? 'Lunas' : 'Piutang' }}</td>
                     <td class="text-center">{{ $trx->status_pengerjaan }}</td>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('jenis_jasa');
             $table->string('jenis_barang');
             $table->integer('harga');
+            $table->enum('kategori', ['jumlah', 'berat'])->default('jumlah'); 
             $table->timestamps();
         });
     }

@@ -40,11 +40,7 @@ class User extends Authenticatable
      * Mengubah kolom autentikasi dari 'email' menjadi 'username'.
      * (Opsional — hanya jika kamu pakai sistem login bawaan Laravel)
      */
-    public function getAuthIdentifierName()
-    {
-        return 'username';
-    }
-
+    
     public function transaksi()
     {
         return $this->hasMany(Transaksi::class, 'id_user');

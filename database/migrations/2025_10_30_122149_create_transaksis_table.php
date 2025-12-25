@@ -22,8 +22,10 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->foreignId('id_jasa')->constrained('jenis_jasas')->onDelete('cascade');
             
-            $table->integer('jumlah_barang');
+            $table->float('jumlah_barang');
             $table->integer('total_harga');
+
+            $table->string('description')->nullable();
 
             // 2. Tambahan: Status Pembayaran
             // Penting untuk mengetahui apakah cucian sudah dibayar atau belum (Bon)

@@ -72,7 +72,8 @@ class TransaksiAdminController extends Controller
         $request->validate([
             'id_user'       => 'required|exists:users,id',
             'id_jasa'       => 'required|exists:jenis_jasas,id',
-            'jumlah_barang' => 'required|numeric|min:1',
+            'jumlah_barang' => 'required|numeric|min:0.1',
+            'description'     => 'required|string|max:1000',
             'tanggal_terima' => 'required|date',
             'status_bayar'  => 'required|in:Lunas,Belum Lunas',
         ]);
@@ -92,6 +93,7 @@ class TransaksiAdminController extends Controller
             'id_jasa'           => $request->id_jasa,
             'jumlah_barang'     => $request->jumlah_barang,
             'total_harga'       => $totalHarga,
+            'description'         => $request->description,
             'status_pembayaran' => $request->status_bayar,
             'tanggal_terima'    => $request->tanggal_terima,
             // Estimasi selesai otomatis +2 hari (bisa diedit nanti)
@@ -137,7 +139,8 @@ class TransaksiAdminController extends Controller
         $request->validate([
             'id_user'       => 'required|exists:users,id',
             'id_jasa'       => 'required|exists:jenis_jasas,id',
-            'jumlah_barang' => 'required|numeric|min:1',
+            'jumlah_barang' => 'required|numeric|min:0.1',
+            'description'     => 'required|string|max:1000',
             'tanggal_terima' => 'required|date',
             'status_bayar'  => 'required|in:Lunas,Belum Lunas',
             'status_kerja'  => 'required|in:Menunggu,Diproses,Selesai,Diambil',
@@ -155,6 +158,7 @@ class TransaksiAdminController extends Controller
             'id_jasa'           => $request->id_jasa,
             'jumlah_barang'     => $request->jumlah_barang,
             'total_harga'       => $totalHarga,
+            'description'        => $request->description,
             'status_pembayaran' => $request->status_bayar,
             'tanggal_terima'    => $request->tanggal_terima,
             // Tanggal selesai diperbarui jika status kerja berubah

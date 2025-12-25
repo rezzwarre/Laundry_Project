@@ -57,7 +57,14 @@
                                 {{-- Kolom Pelanggan --}}
                                 <td>
                                     <div class="font-weight-bold text-dark">{{ $trx->user->nama ?? 'User Terhapus' }}</div>
-                                    <small class="text-muted">Jumlah: **{{ $trx->jumlah_barang }}**</small>
+                                    <small class="text-muted">
+                                        {{ $trx->jasa->kategori }} : {{ $trx->jumlah_barang }}
+                                        @if ($trx->jasa->kategori == 'berat')
+                                            Kg
+                                        @elseif ($trx->jasa->kategori == 'jumlah')
+                                            Pcs
+                                        @endif
+                                    </small>
                                 </td>
 
                                 {{-- Kolom Layanan --}}

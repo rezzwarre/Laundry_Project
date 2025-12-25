@@ -51,7 +51,7 @@
     {{-- SUMMARY CARDS FINANSIAL --}}
     <div class="row mb-4">
         {{-- ... (Summary Cards yang sudah ada) ... --}}
-        
+
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body card-report">
@@ -111,7 +111,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body card-report">
@@ -142,7 +142,7 @@
                 Data Transaksi Periode {{ $startDate->format('d M Y') }} s/d {{ $endDate->format('d M Y') }}
             </h6>
 
-             {{-- Tombol Cetak PDF diletakkan di sini jika menggunakan cara JavaScript/URL --}}
+            {{-- Tombol Cetak PDF diletakkan di sini jika menggunakan cara JavaScript/URL --}}
             {{-- Karena sudah ditaruh di form filter di atas, bagian ini dikosongkan --}}
         </div>
         <div class="card-body">
@@ -165,8 +165,15 @@
                                 <td>{{ $trx->kode_invoice }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trx->tanggal_terima)->format('d M Y') }}</td>
                                 {{-- PERHATIAN: Asumsi kolom pelanggan di tabel users adalah 'name', bukan 'nama' --}}
-                                <td>{{ $trx->user->name ?? 'User N/A' }}</td> 
-                                <td>{{ $trx->jasa->jenis_jasa ?? 'Jasa N/A' }} ({{ $trx->jumlah_barang }})</td>
+                                <td>{{ $trx->user->nama ?? 'User N/A' }}</td>
+                                <td>{{ $trx->jasa->jenis_jasa ?? 'Jasa N/A' }} <strong>
+                                        {{ $trx->jumlah_barang }}
+                                        @if ($trx->jasa->kategori == 'berat')
+                                            Kg
+                                        @elseif ($trx->jasa->kategori == 'jumlah')
+                                            Pcs
+                                        @endif
+                                    </strong></td>
 
                                 <td class="text-end font-weight-bold">
                                     Rp{{ number_format($trx->total_harga, 0, ',', '.') }}
@@ -218,21 +225,21 @@
 
     {{-- SCRIPTS UNTUK CETAK PDF --}}
     <script>
-        document.getElementById('btn-cetak-pdf').addEventListener('click', function() {
+        document.getElementById('btn-cetak-pdf').addEventListener('click', function () {
             // Ambil nilai dari input filter tanggal
-            let startDate = document.getElementById('start_date_input').value; 
-            let endDate = document.getElementById('end_date_input').value;   
+            let startDate = document.getElementById('start_date_input').value;
+            let endDate = document.getElementById('end_date_input').value;
 
             // URL route generate PDF
-            let url = "{{ route('admin.laporan.generate') }}"; 
-            
+            let url = "{{ route('admin.laporan.generate') }}";
+
             // Tambahkan parameter filter ke URL
             if (startDate && endDate) {
                 url += `?start_date=${startDate}&end_date=${endDate}`;
             }
-            
+
             // Buka PDF di tab baru
-            window.open(url, '_blank'); 
+            window.open(url, '_blank');
         });
     </script>
 @endsection

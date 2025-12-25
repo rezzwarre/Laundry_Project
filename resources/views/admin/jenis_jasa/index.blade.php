@@ -16,6 +16,7 @@
                 <th>Jenis Jasa</th>
                 <th>Jenis Barang</th>
                 <th>Harga / Satuan</th>
+                <th>Kategori</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -26,6 +27,7 @@
                 <td>{{ $jasa->jenis_jasa }}</td>
                 <td>{{ $jasa->jenis_barang }}</td>
                 <td>Rp{{ number_format($jasa->harga, 0, ',', '.') }}</td>
+                <td>{{ $jasa->kategori }}</td>
                 <td>
                     <a href="{{ route('admin.jenis_jasa.edit', $jasa->id) }}" class="btn btn-sm btn-warning">Edit</a>
                     {{-- Form Delete --}}
