@@ -47,7 +47,6 @@ class TransaksiAdminController extends Controller
 
         // Kirim data ke view
         return view('admin.transaksi.index', compact('transaksis'));
-
     }
 
     /**
@@ -76,11 +75,15 @@ class TransaksiAdminController extends Controller
             'description'     => 'required|string|max:1000',
             'tanggal_terima' => 'required|date',
             'status_bayar'  => 'required|in:Lunas,Belum Lunas',
+            'antar_jemput' => 'nullable|boolean', // Kolom antar jemput baru
         ]);
 
+        $biayaAntarJemput = $request->antar_jemput ? 5000 : 0;
         // 2. Ambil data jasa untuk hitung harga valid
         $jasa = Jenis_jasa::findOrFail($request->id_jasa);
-        $totalHarga = $jasa->harga * $request->jumlah_barang;
+        $totalHarga = ($jasa->harga * $request->jumlah_barang) + $biayaAntarJemput;
+
+
 
         // 3. Generate Kode Invoice (Format: INV-TAHUNBULANTANGGAL-RANDOM)
         // Contoh: INV-20231122-A1B
@@ -99,6 +102,8 @@ class TransaksiAdminController extends Controller
             // Estimasi selesai otomatis +2 hari (bisa diedit nanti)
             'tanggal_selesai'   => Carbon::parse($request->tanggal_terima)->addDays(2),
             'status_pengerjaan' => 'Menunggu', // Default status
+            'antar_jemput'      => $request->antar_jemput ?? false,
+            'biaya_antar_jemput' => $biayaAntarJemput,
         ]);
 
         return redirect()->route('admin.transaksi.index')
@@ -139,16 +144,31 @@ class TransaksiAdminController extends Controller
         $request->validate([
             'id_user'       => 'required|exists:users,id',
             'id_jasa'       => 'required|exists:jenis_jasas,id',
-            'jumlah_barang' => 'required|numeric|min:0.1',
+            'jumlah_barang' => 'required|numeric|min:0.0',
             'description'     => 'required|string|max:1000',
             'tanggal_terima' => 'required|date',
             'status_bayar'  => 'required|in:Lunas,Belum Lunas',
-            'status_kerja'  => 'required|in:Menunggu,Diproses,Selesai,Diambil',
+            'status_kerja'  => 'required|in:Menunggu,Dijemput,Diproses,Selesai,Diantar,Diambil',
+            'antar_jemput' => 'nullable|boolean', // Kolom antar jemput baru
         ]);
+
+
+        $statusKerja = $request->status_kerja;
+        $antarJemput = $request->antar_jemput ?? false;
+
+        // ✅ LOGIKA BIAYA ANTAR JEMPUT
+        $biayaAntarJemput = 0;
+        if ($antarJemput && !in_array($statusKerja, ['Menunggu', 'Dijemput'])) {
+            $biayaAntarJemput = 5000;
+        }
+
+
 
         // 2. Ambil data jasa untuk hitung ulang harga (validasi keamanan)
         $jasa = Jenis_jasa::findOrFail($request->id_jasa);
-        $totalHarga = $jasa->harga * $request->jumlah_barang;
+        $totalHarga = ($jasa->harga * $request->jumlah_barang) + $biayaAntarJemput;
+
+
 
         // 3. Cari dan update data
         $transaksi = Transaksi::findOrFail($id);
@@ -166,6 +186,8 @@ class TransaksiAdminController extends Controller
                 ? $transaksi->tanggal_selesai ?? Carbon::now()
                 : $request->tanggal_selesai,
             'status_pengerjaan' => $request->status_kerja,
+            'antar_jemput'      => $request->antar_jemput ?? false,
+            'biaya_antar_jemput' => $biayaAntarJemput,
         ]);
 
         return redirect()->route('admin.transaksi.index')
@@ -178,5 +200,11 @@ class TransaksiAdminController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function cetak($id)
+    {
+        $transaksi = Transaksi::with(['user', 'jasa'])->findOrFail($id);
+        return view('admin.transaksi.cetak', compact('transaksi'));
     }
 }

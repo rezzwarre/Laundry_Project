@@ -34,9 +34,14 @@ return new class extends Migration
             $table->date('tanggal_terima');
             $table->date('tanggal_selesai')->nullable(); // Nullable karena saat terima, belum tentu tahu pasti kapan selesai
             
-            $table->enum('status_pengerjaan', ['Menunggu', 'Diproses', 'Selesai', 'Diambil'])
+            $table->enum('status_pengerjaan', ['Menunggu', 'Dijemput', 'Diproses', 'Selesai', 'Diantar', 'Diambil'])
                   ->default('Menunggu');
             
+            $table->boolean('antar_jemput')->default(false);
+
+            $table->integer('biaya_antar_jemput')->default(0);
+
+
             $table->timestamps();
         });
 

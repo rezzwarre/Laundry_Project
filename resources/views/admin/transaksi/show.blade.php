@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Transaksi ' . $transaksi->kode_invoice)
+@section('title', 'Detail Transaksi ' . $transaksi->user->nama)
 
 @section('content')
     <div class="row">
-        <div class="col-md-8 mx-auto">
+        <div class="col-md-10 mx-auto">
 
             <div class="card shadow mb-4">
 
@@ -16,12 +16,17 @@
 
                     <div class="d-flex align-items-center">
                         <a href="{{ route('admin.transaksi.edit', $transaksi->id) }}"
-                            class="btn btn-sm btn-warning text-dark me-2">
-                            <i class="fas fa-edit"></i> Edit Status
+                            class="btn btn-sm btn-warning text-dark me-1">
+                            <i class="fas fa-edit"></i> Edit
                         </a>
-                        <a href="{{ route('admin.transaksi.index') }}" class="btn btn-sm btn-light">
+                        <a href="{{ route('admin.transaksi.index') }}" class="btn btn-sm btn-light me-1">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
+                        <a href="{{ route('admin.transaksi.cetak', $transaksi->id) }}" target="_blank"
+                            class="btn btn-sm btn-success me-1">
+                            <i class="fas fa-print"></i> Cetak
+                        </a>
+
                     </div>
                 </div>
 
@@ -85,15 +90,21 @@
                             <td class="fw-bold">Harga Satuan</td>
                             <td>: Rp{{ number_format($transaksi->jasa->harga ?? 0, 0, ',', '.') }}</td>
                         </tr>
+
+                        <tr>
+                            <td class="fw-bold">Biaya Ongkir</td>
+                            <td>: Rp{{ number_format($transaksi->biaya_antar_jemput ?? 0, 0, ',', '.') }}</td>
+                        </tr>
+
                         <tr class="table-light fw-bold">
                             <td>TOTAL HARGA</td>
                             <td>: <strong>Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</strong></td>
-                        </tr> 
+                        </tr>
 
                         <div class="mb-4">
                             <label for="description" class="form-label fw-bold">deskripsi Lengkap</label>
-                            <textarea readonly class="form-control @error('description') is-invalid @enderror" id="description"
-                                name="description" rows="6"
+                            <textarea readonly class="form-control @error('description') is-invalid @enderror"
+                                id="description" name="description" rows="6"
                                 placeholder="Jelaskan detail layanan Anda, misalnya: Syarat & Ketentuan, durasi, dll."
                                 required>{{ old('description', $transaksi->description ?? '') }}</textarea>
 
@@ -106,6 +117,15 @@
                             <div class="form-text">Maksimal 1000 karakter.</div>
                         </div>
                     </table>
+
+                    <div class="mb-3">
+                        <label class="form-label">Antar Jemput? (Rp5.000)</label><br>
+
+                        <input type="radio" value="1" {{ $transaksi->antar_jemput ? 'checked' : '' }} disabled> Ya
+
+                        <input type="radio" value="0" {{ !$transaksi->antar_jemput ? 'checked' : '' }} disabled> Tidak
+                    </div>
+
 
                     <hr>
 
@@ -121,9 +141,11 @@
                             @php
                                 $statusClass = [
                                     'Menunggu' => 'secondary',
-                                    'Diproses' => 'warning',
-                                    'Selesai' => 'info',
-                                    'Diambil' => 'success'
+                                    'Dijemput' => 'primary',
+                                    'Diproses' => 'warning text-dark',
+                                    'Selesai' => 'info text-dark',
+                                    'Diantar' => 'success text-dark',
+                                    'Diambil' => 'success',
                                 ][$transaksi->status_pengerjaan] ?? 'light';
                             @endphp
 
@@ -148,7 +170,7 @@
                                 {{ $transaksi->tanggal_selesai
         ? \Carbon\Carbon::parse($transaksi->tanggal_selesai)->format('d F Y')
         : '-' 
-                                            }}
+                                                            }}
                             </p>
                         </div>
 
@@ -160,3 +182,4 @@
     </div>
 
 @endsection
+

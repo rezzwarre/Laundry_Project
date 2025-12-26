@@ -43,7 +43,10 @@ Route::middleware(['auth'])->group(function () {
     // Transaksi Pengguna
     // Resource hanya untuk 'index', 'create', 'store', dan 'show'
     Route::resource('transaksi', TransaksiUserController::class)->only([
-        'index', 'create', 'store', 'show'
+        'index',
+        'create',
+        'store',
+        'show'
     ])->names('user.transaksi');
 });
 
@@ -62,6 +65,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     // Pengelolaan Transaksi (CRUD Penuh + Ubah Status)
     Route::resource('transaksi', TransaksiAdminController::class)->names('admin.transaksi');
     Route::patch('transaksi/{transaksi}/status', [TransaksiAdminController::class, 'updateStatus'])->name('admin.transaksi.update_status');
+    Route::get(
+        '/admin/transaksi/{id}/cetak',
+        [TransaksiAdminController::class, 'cetak']
+    )->name('admin.transaksi.cetak');
+
 
     // Laporan
     Route::get('laporan', [LaporanAdminController::class, 'index'])->name('admin.laporan.index');

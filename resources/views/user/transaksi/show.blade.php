@@ -12,7 +12,7 @@
                         Nota Transaksi: {{ $transaksi->kode_invoice }}
                     </h5>
 
-                    <div class="d-flex align-items-center">          
+                    <div class="d-flex align-items-center">
                         <a href="{{ route('user.transaksi.index') }}" class="btn btn-sm btn-light">
                             <i class="fas fa-arrow-left"></i> Kembali
                         </a>
@@ -79,6 +79,10 @@
                             <td class="fw-bold">Harga Satuan</td>
                             <td>: Rp{{ number_format($transaksi->jasa->harga ?? 0, 0, ',', '.') }}</td>
                         </tr>
+                        <tr>
+                            <td class="fw-bold">Biaya Antar Jemput</td>
+                            <td>: Rp{{ number_format($transaksi->biaya_antar_jemput ?? 0, 0, ',', '.') }}</td>
+                        </tr>
                         <tr class="table-light fw-bold">
                             <td>TOTAL HARGA</td>
                             <td>: <strong>Rp{{ number_format($transaksi->total_harga, 0, ',', '.') }}</strong></td>
@@ -86,8 +90,8 @@
 
                         <div class="mb-4">
                             <label for="description" class="form-label fw-bold">deskripsi Lengkap</label>
-                            <textarea readonly class="form-control @error('description') is-invalid @enderror" id="description"
-                                name="description" rows="6"
+                            <textarea readonly class="form-control @error('description') is-invalid @enderror"
+                                id="description" name="description" rows="6"
                                 placeholder="Jelaskan detail layanan Anda, misalnya: Syarat & Ketentuan, durasi, dll."
                                 required>{{ old('description', $transaksi->description ?? '') }}</textarea>
 
@@ -98,6 +102,14 @@
                                 </div>
                             @enderror
                             <div class="form-text">Maksimal 1000 karakter.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Antar Jemput? (Rp5.000)</label><br>
+
+                            <input type="radio" value="1" {{ $transaksi->antar_jemput ? 'checked' : '' }} disabled> Ya
+
+                            <input type="radio" value="0" {{ !$transaksi->antar_jemput ? 'checked' : '' }} disabled> Tidak
                         </div>
                     </table>
 
@@ -115,9 +127,11 @@
                             @php
                                 $statusClass = [
                                     'Menunggu' => 'secondary',
-                                    'Diproses' => 'warning',
-                                    'Selesai' => 'info',
-                                    'Diambil' => 'success'
+                                    'Dijemput' => 'primary',
+                                    'Diproses' => 'warning text-dark',
+                                    'Selesai' => 'info text-dark',
+                                    'Diantar' => 'success text-dark',
+                                    'Diambil' => 'success',
                                 ][$transaksi->status_pengerjaan] ?? 'light';
                             @endphp
 
@@ -142,7 +156,7 @@
                                 {{ $transaksi->tanggal_selesai
         ? \Carbon\Carbon::parse($transaksi->tanggal_selesai)->format('d F Y')
         : '-' 
-                                            }}
+                                                            }}
                             </p>
                         </div>
 

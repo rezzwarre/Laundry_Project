@@ -56,6 +56,7 @@ class TransaksiUserController extends Controller
         $validatedData = $request->validate([
             'id_jasa' => 'required|exists:jenis_jasas,id',
             'description' => 'required|string|max:500', // Kolom catatan baru
+            'antar_jemput' => 'nullable|boolean', // Kolom antar jemput baru
         ]);
         // dd($request->id_jasa);
 
@@ -79,6 +80,8 @@ class TransaksiUserController extends Controller
                 // Nilai default yang akan diisi Admin
                 'jumlah_barang' => 0.0, // Default 0
                 'total_harga' => 0, // Default 0
+                'antar_jemput' => $validatedData['antar_jemput'] ?? false,
+                'biaya_antar_jemput' => $validatedData['antar_jemput'] ? 5000 : 0,
                 'tanggal_terima' => now(), // Tanggal pembuatan
 
                 // Status Awal

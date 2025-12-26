@@ -19,7 +19,7 @@
                         <label class="form-label font-weight-bold">Status Pengerjaan</label>
                         <select name="status_kerja" class="form-control form-select">
                             {{-- Perbaikan: Sesuaikan dengan nama kolom yang benar jika berbeda, asumsikan 'status_pengerjaan' --}}
-                            @foreach(['Menunggu', 'Diproses', 'Selesai', 'Diambil'] as $status)
+                            @foreach(['Menunggu', 'Dijemput', 'Diproses', 'Selesai', 'Diantar', 'Diambil'] as $status)
                                 <option value="{{ $status }}" 
                                     {{ old('status_kerja', $transaksi->status_pengerjaan) == $status ? 'selected' : '' }}>
                                     {{ $status }}
@@ -45,7 +45,7 @@
                     {{-- Pilih Pelanggan --}}
                     <div class="mb-3">
                         <label class="form-label">Pelanggan</label>
-                        <select name="id_user" class="form-control form-select @error('id_user') is-invalid @enderror">
+                        <select name="id_user" class="form-control form-select @error('id_user') is-invalid @enderror" disabled>
                             @foreach($customers as $user)
                                 <option value="{{ $user->id }}" 
                                     {{ old('id_user', $transaksi->id_user) == $user->id ? 'selected' : '' }}>
@@ -53,6 +53,8 @@
                                 </option>
                             @endforeach
                         </select>
+                        <!-- nilai tetap terkirim -->
+                        <input type="hidden" name="id_user" value="{{ $transaksi->id_user }}">
                     </div>
 
                     {{-- Baris Layanan & Jumlah --}}
@@ -113,7 +115,17 @@
                             @enderror
                             <div class="form-text">Maksimal 1000 karakter.</div>
                         </div>
+                    
+                        <div class="mb-3">
+                            <label class="form-label">Antar Jemput? (Rp5.000)</label><br>
 
+                            <input type="radio" disabled {{ $transaksi->antar_jemput ? 'checked' : '' }}> Ya
+                            <input type="radio" disabled {{ !$transaksi->antar_jemput ? 'checked' : '' }}> Tidak
+
+                            <!-- nilai tetap dikirim -->
+                            <input type="hidden" name="antar_jemput" value="{{ $transaksi->antar_jemput ? 1 : 0 }}">
+                        </div>
+                        
                     <div class="mb-3">
                         <label class="form-label">Tanggal Terima</label>
                         <input type="date" name="tanggal_terima" class="form-control" value="{{ old('tanggal_terima', $transaksi->tanggal_terima) }}">
@@ -184,7 +196,7 @@
             if (kategori === 'berat') {
                 // Kategori Berat: Boleh Desimal (0.01 Kg)
                 inputJumlah.setAttribute('step', '0.01');
-                inputJumlah.setAttribute('min', '0.01');
+                inputJumlah.setAttribute('min', '0.00');
                 satuanInfo.textContent = `Satuan: ${satuan} (Contoh: 1.5 ${satuan}). Boleh desimal.`;
                 
                 // Atur nilai default/minimum
@@ -194,7 +206,7 @@
             } else if (kategori === 'jumlah') {
                 // Kategori Jumlah: Hanya Integer
                 inputJumlah.setAttribute('step', '1');
-                inputJumlah.setAttribute('min', '1');
+                inputJumlah.setAttribute('min', '0');
                 satuanInfo.textContent = `Satuan: ${satuan} (Contoh: 2 ${satuan}). Hanya bilangan bulat.`;
                 
                 // Pastikan nilai di input adalah integer positif

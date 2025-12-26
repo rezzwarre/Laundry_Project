@@ -60,8 +60,10 @@
                                             // Logika untuk menentukan warna badge
                                             $statusClass = match ($t->status_pengerjaan) {
                                                 'Menunggu' => 'secondary',
+                                                'Dijemput' => 'primary',
                                                 'Diproses' => 'warning text-dark',
                                                 'Selesai' => 'info text-dark',
+                                                'Diantar' => 'success text-dark',
                                                 'Diambil' => 'success',
                                                 default => 'light',
                                             };

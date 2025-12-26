@@ -45,6 +45,13 @@
                             setelah barang Anda kami terima.
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Antar Jemput? (Rp5.000)</label><br>
+
+                            <input type="radio" name="antar_jemput" value="1"> Ya
+                            <input type="radio" name="antar_jemput" value="0" checked> Tidak
+                        </div>
+
                         {{-- 2. CATATAN / DESKRIPSI (Kolom baru) --}}
                         <div class="mb-4">
                             <label for="description" class="form-label fw-bold">Deskripsi Tambahan untuk Admin

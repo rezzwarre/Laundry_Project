@@ -88,6 +88,13 @@
                             <div class="form-text">Maksimal 1000 karakter.</div>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Antar Jemput? (Rp5.000)</label><br>
+
+                            <input type="radio" name="antar_jemput" value="1"> Ya
+                            <input type="radio" name="antar_jemput" value="0" checked> Tidak
+                        </div>
+
                         {{-- Tanggal & Pembayaran (Tetap) --}}
                         <div class="row">
                             <div class="col-md-6 mb-3">

@@ -24,7 +24,7 @@ class Transaksi extends Model
     protected $fillable = [
         'kode_invoice', 'id_user', 'id_jasa', 'jumlah_barang', 
         'total_harga','description', 'status_pembayaran', 'tanggal_terima', 
-        'tanggal_selesai', 'status_pengerjaan'
+        'tanggal_selesai', 'status_pengerjaan','antar_jemput', 'biaya_antar_jemput'
     ];
     
     public function user()
