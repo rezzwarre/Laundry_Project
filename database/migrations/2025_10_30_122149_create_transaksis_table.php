@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
-            
+
             // 1. Tambahan: Kode Invoice (misal: INV-2025001)
             // Wajib unique agar tidak ada nomor struk ganda
             $table->string('kode_invoice')->unique();
 
             // Foreign Keys (Perbaikan typo 'foreIgnId' -> 'foreignId')
-            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
+            $table->foreignId('id_user')->nullable()->constrained('users')->nullonDelete();
             $table->foreignId('id_jasa')->constrained('jenis_jasas')->onDelete('cascade');
-            
+
             $table->float('jumlah_barang');
             $table->integer('total_harga');
 
@@ -33,18 +33,22 @@ return new class extends Migration
 
             $table->date('tanggal_terima');
             $table->date('tanggal_selesai')->nullable(); // Nullable karena saat terima, belum tentu tahu pasti kapan selesai
-            
+
             $table->enum('status_pengerjaan', ['Menunggu', 'Dijemput', 'Diproses', 'Selesai', 'Diantar', 'Diambil'])
-                  ->default('Menunggu');
-            
+                ->default('Menunggu');
+
             $table->boolean('antar_jemput')->default(false);
 
             $table->integer('biaya_antar_jemput')->default(0);
 
+            $table->enum('sumber_transaksi', ['online', 'kasir'])->default('online');
+            $table->string('nama_pelanggan')->nullable();
+            $table->string('alamat_pelanggan')->nullable();
+            $table->string('no_hp_pelanggan')->nullable();
 
             $table->timestamps();
         });
-
+        
     }
 
     /**

@@ -6,55 +6,86 @@ use App\Models\User;
 use App\Models\Jenis_jasa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Transaksi>
- */
+
 class TransaksiFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
     public function definition(): array
     {
-        // Ambil data Jasa secara acak (atau buat baru jika kosong)
-        $jasa = Jenis_jasa::inRandomOrder()->first() ?? Jenis_jasa::factory()->create();
-        
-        // Ambil User secara acak
-        $user = User::inRandomOrder()->first() ?? User::factory()->create();
+        $jasa = Jenis_jasa::inRandomOrder()->first()
+            ?? Jenis_jasa::factory()->create();
 
-        // Random jumlah barang 1-10
-        $jumlah = $this->faker->numberBetween(1, 10);
+        // 🔹 Tentukan sumber transaksi
+        $isOnline = $this->faker->boolean(70); // 70% online, 30% kasir
 
-        // Buat tanggal terima acak dalam 7 hari terakhir
-        $tanggalTerima = $this->faker->dateTimeBetween('-7 days', 'now');
-        
-        // Tanggal selesai harus setelah tanggal terima (tambah 1-3 hari dari tgl terima)
-        // clone digunakan agar variabel tanggalTerima asli tidak berubah
-        $tanggalSelesai = (clone $tanggalTerima)->modify('+' . rand(1, 3) . ' days');
+        $user = null;
+        $namaPelanggan = null;
+        $noHp = null;
+
+        if ($isOnline) {
+            $user = User::inRandomOrder()->first()
+                ?? User::factory()->create();
+        } else {
+            $namaPelanggan = $this->faker->name();
+            $noHp = $this->faker->phoneNumber();
+        }
+
+        // Jumlah barang / berat
+        $jumlah = $jasa->kategori === 'berat'
+            ? $this->faker->randomFloat(1, 1, 5)
+            : $this->faker->numberBetween(1, 10);
+
+        // Status pengerjaan
+        $statusKerja = $this->faker->randomElement([
+            'Menunggu',
+            'Dijemput',
+            'Diproses',
+            'Selesai',
+            'Diambil',
+        ]);
+
+        // Antar jemput
+        $antarJemput = $this->faker->boolean(40);
+
+        // 🔥 LOGIKA BIAYA ANTAR JEMPUT
+        $biayaAntarJemput = 0;
+        if ($antarJemput && !in_array($statusKerja, ['Menunggu', 'Dijemput'])) {
+            $biayaAntarJemput = 5000;
+        }
+
+        // Tanggal
+        $tanggalTerima = $this->faker->dateTimeBetween('-14 days', 'now');
+        $tanggalSelesai = in_array($statusKerja, ['Selesai', 'Diambil'])
+            ? (clone $tanggalTerima)->modify('+' . rand(1, 3) . ' days')
+            : null;
+
+        // Total harga
+        $totalHarga = ($jumlah * $jasa->harga) + $biayaAntarJemput;
 
         return [
-            // Generate Kode Invoice Unik (Contoh: TRX-839201)
-            'kode_invoice'      => 'TRX-' . $this->faker->unique()->numerify('######'),
-            
-            'id_user'           => $user->id,
-            'id_jasa'           => $jasa->id,
-            'jumlah_barang'     => $jumlah,
-            
-            // Kalkulasi otomatis: Harga Satuan x Jumlah
-            'total_harga'       => $jumlah * $jasa->harga,
-            
-            // Kolom baru dari migrasi
+            'kode_invoice' => 'INV-' . $this->faker->unique()->numerify('######'),
+
+            // ONLINE vs KASIR
+            'id_user'       => $user?->id,
+            'nama_pelanggan'=> $namaPelanggan,
+            'no_hp_pelanggan' => $noHp,
+
+            'id_jasa'       => $jasa->id,
+            'jumlah_barang' => $jumlah,
+            'description'   => $this->faker->sentence(),
+
+            'antar_jemput'        => $antarJemput,
+            'biaya_antar_jemput' => $biayaAntarJemput,
+
+            'total_harga'       => $totalHarga,
             'status_pembayaran' => $this->faker->randomElement(['Belum Lunas', 'Lunas']),
-            
-            'tanggal_terima'    => $tanggalTerima,
-            'tanggal_selesai'   => $tanggalSelesai,
-            
-            'status_pengerjaan' => $this->faker->randomElement(['Menunggu', 'Diproses', 'Selesai', 'Diambil']),
-            
-            'created_at'        => $tanggalTerima, // Samakan created_at dengan tanggal terima
-            'updated_at'        => now(),
+            'status_pengerjaan' => $statusKerja,
+
+            'tanggal_terima'  => $tanggalTerima,
+            'tanggal_selesai' => $tanggalSelesai,
+
+            'created_at' => $tanggalTerima,
+            'updated_at' => now(),
         ];
     }
 }

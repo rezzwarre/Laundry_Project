@@ -5,10 +5,16 @@
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">🧺 Data Transaksi Pelayanan</h1>
-        <a href="{{ route('admin.transaksi.create') }}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm text-white-50"></i> Transaksi Baru
-        </a>
+        <div>
+            <a href="{{ route('admin.transaksi.create') }}" class="btn btn-primary shadow-sm m-2">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Transaksi Baru
+            </a>
+            <a href="{{ route('admin.kasir.create') }}" class="btn btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white-50"></i> Transaksi Cepat
+            </a>
+        </div>
     </div>
+
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -56,7 +62,14 @@
 
                                 {{-- Kolom Pelanggan --}}
                                 <td>
-                                    <div class="font-weight-bold text-dark">{{ $trx->user->nama ?? 'User Terhapus' }}</div>
+                                    <div class="font-weight-bold text-dark">
+                                        @if ($trx->id_user)
+                                            {{ $trx->user->nama ?? 'User Terhapus' }}
+                                        @else
+                                            {{ $trx->nama_pelanggan ?? 'Pelanggan Kasir' }}
+                                        @endif
+                                    </div>
+
                                     <small class="text-muted">
                                         {{ $trx->jasa->kategori }} : {{ $trx->jumlah_barang }}
                                         @if ($trx->jasa->kategori == 'berat')
@@ -66,6 +79,7 @@
                                         @endif
                                     </small>
                                 </td>
+
 
                                 {{-- Kolom Layanan --}}
                                 <td>{{ $trx->jasa->jenis_jasa ?? 'Jasa Terhapus' }}</td>
@@ -92,7 +106,7 @@
                                             'Dijemput' => 'primary',
                                             'Diproses' => 'warning text-dark',
                                             'Selesai' => 'info text-dark',
-                                            'Diantar' => 'success text-dark', 
+                                            'Diantar' => 'success text-dark',
                                             'Diambil' => 'success',
                                             default => 'light',
                                         };

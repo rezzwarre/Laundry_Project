@@ -43,7 +43,7 @@
                     <h6 class="font-weight-bold mb-3 text-secondary">DATA TRANSAKSI (HATI-HATI MENGUBAH)</h6>
 
                     {{-- Pilih Pelanggan --}}
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label class="form-label">Pelanggan</label>
                         <select name="id_user" class="form-control form-select @error('id_user') is-invalid @enderror" disabled>
                             @foreach($customers as $user)
@@ -55,7 +55,35 @@
                         </select>
                         <!-- nilai tetap terkirim -->
                         <input type="hidden" name="id_user" value="{{ $transaksi->id_user }}">
-                    </div>
+                    </div> --}}
+
+                    <div class="mb-3">
+                        <label class="form-label">Pelanggan</label>
+
+                            @if ($transaksi->id_user)
+                            {{-- TRANSAKSI ONLINE --}}
+                                <select class="form-control form-select" disabled>
+                                    @foreach($customers as $user)
+                                        <option value="{{ $user->id }}"
+                                            {{ $transaksi->id_user == $user->id ? 'selected' : '' }}>
+                                                {{ $user->nama }}
+                                        </option>
+                                     @endforeach
+                                </select>
+
+                            {{-- tetap terkirim --}}
+                        <input type="hidden" name="id_user" value="{{ $transaksi->id_user }}">
+
+                        @else
+                            {{-- TRANSAKSI KASIR --}}
+                        <input type="text" class="form-control" 
+                            value="{{ $transaksi->nama_pelanggan }}" disabled>
+
+                            {{-- id_user memang NULL --}}
+                        <input type="hidden" name="id_user" value="">
+                        @endif
+            </div>
+
 
                     {{-- Baris Layanan & Jumlah --}}
                     <div class="row">
@@ -127,7 +155,7 @@
                         </div>
                         
                     <div class="mb-3">
-                        <label class="form-label">Tanggal Terima</label>
+                        <label hidden class="form-label">Tanggal Terima</label>
                         <input type="date" name="tanggal_terima" class="form-control" value="{{ old('tanggal_terima', $transaksi->tanggal_terima) }}">
                     </div>
 

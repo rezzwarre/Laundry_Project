@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call([
-            UserSeeder::class,
+            // UserSeeder::class,
             // AdminSeeder::class,
             Jenis_jasaSeeder::class,
             // TransaksiSeeder::class,
@@ -33,13 +33,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        // User::factory(20)->create();
+        User::factory(20)->create();
         Admin::factory(2)->create();
 
         // Jenis_jasa::factory(5)->create();
 
-        // Transaksi::factory(50)->create();
+        Transaksi::factory(50)->create();
 
-        // Laporan::factory(30)->create();
+        Laporan::factory(30)->create();
     }
 }

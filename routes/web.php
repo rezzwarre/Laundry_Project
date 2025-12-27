@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\TransaksiUserController;
 use App\Http\Controllers\Admin\Jenis_jasaController;
 use App\Http\Controllers\Admin\LaporanAdminController;
+use App\Http\Controllers\Admin\KasirTransaksiController;
 use App\Http\Controllers\Admin\TransaksiAdminController;
 use App\Http\Controllers\WelcomeController; // Asumsi ada controller untuk homepage
 
@@ -69,6 +70,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         '/admin/transaksi/{id}/cetak',
         [TransaksiAdminController::class, 'cetak']
     )->name('admin.transaksi.cetak');
+
+     Route::prefix('kasir')->group(function () {
+        Route::get('/create', [KasirTransaksiController::class, 'create'])->name('admin.kasir.create');
+        Route::post('/store', [KasirTransaksiController::class, 'store'])->name('admin.kasir.store');
+    });
 
 
     // Laporan

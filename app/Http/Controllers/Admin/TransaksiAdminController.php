@@ -15,39 +15,71 @@ class TransaksiAdminController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     // // Ambil data transaksi, urutkan dari yang terbaru
+    //     // // 'with' digunakan untuk Eager Loading (Mencegah query berulang-ulang)
+    //     // $transaksis = Transaksi::with(['user', 'jasa'])
+    //     //     ->latest()
+    //     //     ->paginate(10); // Tampilkan 10 per halaman
+
+    //     // return view('admin.transaksi.index', compact('transaksis'));
+
+    //     $query = Transaksi::with(['user', 'jasa']);
+
+    //     // LOGIKA PENCARIAN
+    //     if ($request->has('search') && $request->search != '') {
+    //         $searchTerm = $request->search;
+
+    //         $query->where(function ($q) use ($searchTerm) {
+    //             // 1. Mencari berdasarkan Kode Invoice
+    //             $q->where('kode_invoice', 'like', '%' . $searchTerm . '%')
+
+    //                 // 2. Mencari berdasarkan Nama Pelanggan (JOIN/Relationship)
+    //                 ->orWhereHas('user', function ($q_user) use ($searchTerm) {
+    //                     $q_user->where('nama', 'like', '%' . $searchTerm . '%');
+    //                 });
+    //         });
+    //     }
+
+    //     // Ambil data yang sudah difilter/dicari
+    //     $transaksis = $query->latest()->paginate(10);
+
+    //     // Kirim data ke view
+    //     return view('admin.transaksi.index', compact('transaksis'));
+    // }
+
     public function index(Request $request)
     {
-        // // Ambil data transaksi, urutkan dari yang terbaru
-        // // 'with' digunakan untuk Eager Loading (Mencegah query berulang-ulang)
-        // $transaksis = Transaksi::with(['user', 'jasa'])
-        //     ->latest()
-        //     ->paginate(10); // Tampilkan 10 per halaman
-
-        // return view('admin.transaksi.index', compact('transaksis'));
-
+        
         $query = Transaksi::with(['user', 'jasa']);
 
-        // LOGIKA PENCARIAN
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $searchTerm = $request->search;
 
             $query->where(function ($q) use ($searchTerm) {
-                // 1. Mencari berdasarkan Kode Invoice
-                $q->where('kode_invoice', 'like', '%' . $searchTerm . '%')
 
-                    // 2. Mencari berdasarkan Nama Pelanggan (JOIN/Relationship)
-                    ->orWhereHas('user', function ($q_user) use ($searchTerm) {
-                        $q_user->where('nama', 'like', '%' . $searchTerm . '%');
-                    });
+                // 1️⃣ Cari berdasarkan KODE INVOICE
+                $q->where('kode_invoice', 'like', "%{$searchTerm}%")
+
+                    // 2️⃣ Cari pelanggan ONLINE (relasi user)
+                    ->orWhereHas('user', function ($qUser) use ($searchTerm) {
+                        $qUser->where('nama', 'like', "%{$searchTerm}%");
+                    })
+
+                    // 3️⃣ Cari pelanggan KASIR (nama manual)
+                    ->orWhere('nama_pelanggan', 'like', "%{$searchTerm}%");
+
+                    
             });
         }
 
-        // Ambil data yang sudah difilter/dicari
         $transaksis = $query->latest()->paginate(10);
 
-        // Kirim data ke view
+
         return view('admin.transaksi.index', compact('transaksis'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -140,28 +172,34 @@ class TransaksiAdminController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         // 1. Validasi Input
         $request->validate([
-            'id_user'       => 'required|exists:users,id',
+            'id_user'       => 'nullable|exists:users,id',
             'id_jasa'       => 'required|exists:jenis_jasas,id',
             'jumlah_barang' => 'required|numeric|min:0.0',
             'description'     => 'required|string|max:1000',
-            'tanggal_terima' => 'required|date',
+            'tanggal_terima' => 'nullable|date',
             'status_bayar'  => 'required|in:Lunas,Belum Lunas',
             'status_kerja'  => 'required|in:Menunggu,Dijemput,Diproses,Selesai,Diantar,Diambil',
             'antar_jemput' => 'nullable|boolean', // Kolom antar jemput baru
+
         ]);
 
 
-        $statusKerja = $request->status_kerja;
-        $antarJemput = $request->antar_jemput ?? false;
+
+        // $statusKerja = $request->status_kerja;
+        // $antarJemput = $request->antar_jemput ?? false;
 
         // ✅ LOGIKA BIAYA ANTAR JEMPUT
-        $biayaAntarJemput = 0;
-        if ($antarJemput && !in_array($statusKerja, ['Menunggu', 'Dijemput'])) {
-            $biayaAntarJemput = 5000;
-        }
+        // $biayaAntarJemput = 0;
+        // if ($antarJemput && !in_array($statusKerja, ['Menunggu', 'Dijemput'])) {
+        //     $biayaAntarJemput = 5000;
+        // }
 
+        $biayaAntarJemput = in_array($request->status_kerja, ['Menunggu', 'Dijemput'])
+            ? 0
+            : ($request->antar_jemput ? 5000 : 0);
 
 
         // 2. Ambil data jasa untuk hitung ulang harga (validasi keamanan)
@@ -180,7 +218,7 @@ class TransaksiAdminController extends Controller
             'total_harga'       => $totalHarga,
             'description'        => $request->description,
             'status_pembayaran' => $request->status_bayar,
-            'tanggal_terima'    => $request->tanggal_terima,
+            'tanggal_terima' => $request->tanggal_terima ?? $transaksi->tanggal_terima,
             // Tanggal selesai diperbarui jika status kerja berubah
             'tanggal_selesai'   => ($request->status_kerja == 'Selesai' || $request->status_kerja == 'Diambil')
                 ? $transaksi->tanggal_selesai ?? Carbon::now()
@@ -193,6 +231,61 @@ class TransaksiAdminController extends Controller
         return redirect()->route('admin.transaksi.index')
             ->with('success', 'Transaksi ' . $transaksi->kode_invoice . ' berhasil diperbarui!');
     }
+//LANJUT PERBAIKI FITUR SEARCH
+    // public function update(Request $request, $id)
+    // {
+    //     // 1️⃣ VALIDASI (SUDAH DISESUAIKAN)
+    //     $validated = $request->validate([
+    //         'id_user'        => 'nullable|exists:users,id', // ✅ nullable
+    //         'id_jasa'        => 'required|exists:jenis_jasas,id',
+    //         'jumlah_barang'  => 'required|numeric|min:0.1',
+    //         'description'   => 'required|string|max:1000',
+    //         'tanggal_terima' => 'required|date',
+    //         'status_bayar'   => 'required|in:Lunas,Belum Lunas',
+    //         'status_kerja'   => 'required|in:Menunggu,Dijemput,Diproses,Selesai,Diantar,Diambil',
+    //         'antar_jemput'   => 'nullable|boolean',
+    //     ]);
+
+
+    //     // 2️⃣ NORMALISASI CHECKBOX
+    //     $antarJemput = $request->has('antar_jemput');
+
+    //     // 3️⃣ LOGIKA BIAYA ANTAR JEMPUT (BENAR)
+    //     $biayaAntarJemput = 0;
+    //     if ($antarJemput && !in_array($validated['status_kerja'], ['Menunggu', 'Dijemput'])) {
+    //         $biayaAntarJemput = 5000;
+    //     }
+
+    //     // 4️⃣ HITUNG TOTAL HARGA (AMAN)
+    //     $jasa = Jenis_jasa::findOrFail($validated['id_jasa']);
+    //     $totalHarga = ($jasa->harga * $validated['jumlah_barang']) + $biayaAntarJemput;
+
+    //     // 5️⃣ UPDATE DATA
+    //     $transaksi = Transaksi::findOrFail($id);
+
+    //     $transaksi->update([
+    //         'id_user'            => $validated['id_user'],
+    //         'id_jasa'            => $validated['id_jasa'],
+    //         'jumlah_barang'      => $validated['jumlah_barang'],
+    //         'total_harga'        => $totalHarga,
+    //         'description'        => $validated['description'],
+    //         'status_pembayaran'  => $validated['status_bayar'],
+    //         'tanggal_terima'     => $validated['tanggal_terima'],
+    //         'status_pengerjaan'  => $validated['status_kerja'],
+    //         'antar_jemput'       => $antarJemput,
+    //         'biaya_antar_jemput' => $biayaAntarJemput,
+
+    //         // tanggal selesai hanya di-set jika selesai
+    //         'tanggal_selesai' => in_array($validated['status_kerja'], ['Selesai', 'Diambil'])
+    //             ? $transaksi->tanggal_selesai ?? now()
+    //             : null,
+    //     ]);
+
+    //     return redirect()
+    //         ->route('admin.transaksi.index')
+    //         ->with('success', 'Transaksi ' . $transaksi->kode_invoice . ' berhasil diperbarui!');
+    // }
+
 
     /**
      * Remove the specified resource from storage.
@@ -202,9 +295,18 @@ class TransaksiAdminController extends Controller
         //
     }
 
+    // public function cetak($id)
+    // {
+    //     $transaksi = Transaksi::with(['user', 'jasa'])->findOrFail($id);
+    //     return view('admin.transaksi.cetak', compact('transaksi'));
+
+
+    // }
+
     public function cetak($id)
     {
-        $transaksi = Transaksi::with(['user', 'jasa'])->findOrFail($id);
+        $transaksi = Transaksi::findOrFail($id);
+
         return view('admin.transaksi.cetak', compact('transaksi'));
     }
 }

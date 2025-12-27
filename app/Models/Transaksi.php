@@ -22,11 +22,45 @@ class Transaksi extends Model
     // ];
 
     protected $fillable = [
-        'kode_invoice', 'id_user', 'id_jasa', 'jumlah_barang', 
-        'total_harga','description', 'status_pembayaran', 'tanggal_terima', 
-        'tanggal_selesai', 'status_pengerjaan','antar_jemput', 'biaya_antar_jemput'
+        'kode_invoice',
+
+        //Relasi
+        'id_user',
+        'id_jasa',
+
+        //Pelanggan (kasir)
+        'nama_pelanggan',
+        'alamat_pelanggan',
+        'no_hp_pelanggan',
+
+        //Transaksi inti
+        'jumlah_barang',
+        'total_harga',
+        'description',
+
+        //Antar Jemput
+        'antar_jemput',
+        'biaya_antar_jemput',
+
+        //Status
+        'status_pembayaran',
+        'status_pengerjaan',
+
+        //Tanggal
+        'tanggal_terima',
+        'tanggal_selesai',
+
+        //Penanda sumber
+        'sumber_transaksi'
     ];
-    
+
+    protected $casts = [
+        'antar_jemput' => 'boolean',
+        'tanggal_terima' => 'date',
+        'tanggal_selesai' => 'date',
+    ];
+
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');

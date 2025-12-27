@@ -4,7 +4,12 @@
     <hr>
 
     <p><strong>Invoice:</strong> {{ $transaksi->kode_invoice }}</p>
-    <p><strong>Pelanggan:</strong> {{ $transaksi->user->nama }}</p>
+    <p><strong>Pelanggan:</strong> @if ($transaksi->id_user)
+        {{ $transaksi->user->nama ?? 'User Terhapus' }}
+    @else
+            {{ $transaksi->nama_pelanggan ?? 'Pelanggan Kasir' }}
+        @endif
+    </p>
     <p><strong>Tanggal:</strong> {{ $transaksi->tanggal_terima }}</p>
 
     <hr>
@@ -29,7 +34,7 @@
     <p>Harga Satuan : Rp{{ number_format($transaksi->jasa->harga) }}</p>
     <p>Deskripsi : {{ $transaksi->description }}</p>
     <p>Antar Jemput : {{ $transaksi->antar_jemput ? 'Ya' : 'Tidak' }}</p>
-    <p>Biaya Ongkir : Rp{{ number_format($transaksi->biaya_antar_jemput) }}</p>
+    <p>Biaya Antar Jemput : Rp{{ number_format($transaksi->biaya_antar_jemput) }}</p>
 
     <hr>
 

@@ -165,7 +165,13 @@
                                 <td>{{ $trx->kode_invoice }}</td>
                                 <td>{{ \Carbon\Carbon::parse($trx->tanggal_terima)->format('d M Y') }}</td>
                                 {{-- PERHATIAN: Asumsi kolom pelanggan di tabel users adalah 'name', bukan 'nama' --}}
-                                <td>{{ $trx->user->nama ?? 'User N/A' }}</td>
+                                <td>
+                                     @if ($trx->id_user)
+                                            {{ $trx->user->nama ?? 'User Terhapus' }}
+                                        @else
+                                            {{ $trx->nama_pelanggan ?? 'Pelanggan Kasir' }}
+                                        @endif
+                                </td>
                                 <td>{{ $trx->jasa->jenis_jasa ?? 'Jasa N/A' }} <strong>
                                         {{ $trx->jumlah_barang }}
                                         @if ($trx->jasa->kategori == 'berat')

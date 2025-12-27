@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Detail Transaksi ' . $transaksi->user->nama)
+@section('title', 'Detail Transaksi Pelanggan')
 
 @section('content')
     <div class="row">
@@ -39,17 +39,35 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="font-weight-bold">Pelanggan</label>
-                            <p class="text-dark">{{ $transaksi->user->nama ?? 'N/A' }}</p>
+                            <p class="text-dark">
+                                @if ($transaksi->id_user)
+                                    {{ $transaksi->user->nama ?? 'User Terhapus' }}
+                                @else
+                                    {{ $transaksi->nama_pelanggan ?? 'Pelanggan Kasir' }}
+                                @endif
+                            </p>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label class="font-weight-bold">Alamat</label>
-                            <p class="text-dark">{{ $transaksi->user->alamat ?? 'N/A' }}</p>
+                            <p class="text-dark">
+                                @if ($transaksi->id_user)
+                                    {{ $transaksi->user->alamat ?? 'User Terhapus' }}
+                                @else
+                                    {{ $transaksi->alamat_pelanggan ?? 'Pelanggan Kasir' }}
+                                @endif
+                            </p>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label class="font-weight-bold">No.Telpon</label>
-                            <p class="text-dark">{{ $transaksi->user->no_hp ?? 'N/A' }}</p>
+                            <p class="text-dark">
+                                @if ($transaksi->id_user)
+                                    {{ $transaksi->user->no_hp ?? 'User Terhapus' }}
+                                @else
+                                    {{ $transaksi->no_hp_pelanggan ?? 'Pelanggan Kasir' }}
+                                @endif
+                            </p>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -92,7 +110,7 @@
                         </tr>
 
                         <tr>
-                            <td class="fw-bold">Biaya Ongkir</td>
+                            <td class="fw-bold">Biaya Antar Jemput</td>
                             <td>: Rp{{ number_format($transaksi->biaya_antar_jemput ?? 0, 0, ',', '.') }}</td>
                         </tr>
 
@@ -170,7 +188,7 @@
                                 {{ $transaksi->tanggal_selesai
         ? \Carbon\Carbon::parse($transaksi->tanggal_selesai)->format('d F Y')
         : '-' 
-                                                            }}
+                                                                }}
                             </p>
                         </div>
 
@@ -182,4 +200,5 @@
     </div>
 
 @endsection
+
 
