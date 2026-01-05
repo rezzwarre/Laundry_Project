@@ -43,6 +43,7 @@
                         <div class="alert alert-warning">
                             **Penting:** Berat/Jumlah Barang dan Total Tagihan akan ditentukan dan diverifikasi oleh Admin
                             setelah barang Anda kami terima.
+                            1 pcs sepatu = sepasang sepatu
                         </div>
 
                         <div class="mb-3">
