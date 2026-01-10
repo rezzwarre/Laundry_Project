@@ -21,6 +21,7 @@
                     <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
                 </ul>
 
+                
                 @if (Route::has('login'))
                     <div class="d-flex gap-2">
                         @auth

@@ -3,68 +3,88 @@
 @section('title', 'Login User')
 
 @section('content')
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">Login Pelanggan</div>
-            <div class="card-body">
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                
+                {{-- HEADER --}}
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+                    <h4 class="mb-0 fw-semibold">Login Pelanggan</h4>
+                    <small class="opacity-75">Silakan masuk ke akun Anda</small>
+                </div>
 
-                {{-- ---------------------------------------------------------------- --}}
-                {{-- 1. MENAMPILKAN PESAN ERROR OTENTIKASI (Dari Auth::attempt yang gagal) --}}
-                {{-- Controller mengembalikan pesan error dengan key 'username' --}}
-                @if ($errors->has('username'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Login Gagal!</strong> {{ $errors->first('username') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                {{-- ---------------------------------------------------------------- --}}
+                <div class="card-body p-4">
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
+                    {{-- PESAN ERROR LOGIN --}}
+                    @if ($errors->has('username'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Login gagal!</strong> {{ $errors->first('username') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
 
-                    {{-- FIELD USERNAME --}}
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input 
-                            type="text" 
-                            {{-- Tambahkan kelas is-invalid jika ada error validasi bawaan --}}
-                            class="form-control @error('username') is-invalid @enderror" 
-                            id="username" 
-                            name="username" 
-                            value="{{ old('username') }}" 
-                            required 
-                            autofocus
-                        >
-                        {{-- Menampilkan pesan error validasi (misalnya: 'The username field is required.') --}}
-                        @error('username')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
 
-                    {{-- FIELD PASSWORD --}}
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input 
-                            type="password" 
-                            class="form-control @error('password') is-invalid @enderror" 
-                            id="password" 
-                            name="password" 
-                            required
-                        >
-                        @error('password')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
+                        {{-- USERNAME --}}
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-semibold">Username</label>
+                            <input 
+                                type="text"
+                                class="form-control form-control-lg @error('username') is-invalid @enderror"
+                                id="username"
+                                name="username"
+                                value="{{ old('username') }}"
+                                placeholder="Masukkan username"
+                                required
+                                autofocus
+                            >
+                            @error('username')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
 
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <a href="{{ route('register') }}" class="btn btn-link">Belum punya akun? Daftar</a>
-                    <a href="{{ route('admin.login') }}" class="btn btn-link">Login Admin</a>
-                </form>
+                        {{-- PASSWORD --}}
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <input 
+                                type="password"
+                                class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                id="password"
+                                name="password"
+                                placeholder="Masukkan password"
+                                required
+                            >
+                            @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+
+                        {{-- BUTTON LOGIN --}}
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Login
+                            </button>
+                        </div>
+
+                        {{-- LINK TAMBAHAN --}}
+                        <div class="text-center">
+                            <a href="{{ route('register') }}" class="text-decoration-none">
+                                Belum punya akun?
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="{{ route('admin.login') }}" class="text-decoration-none text-danger">
+                                Login Admin
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>

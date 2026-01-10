@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\TransaksiUserController;
@@ -14,7 +15,13 @@ use App\Http\Controllers\WelcomeController; // Asumsi ada controller untuk homep
 
 
 // Homepage
-Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/', function () {
+    return view('landing.index');
+})->name('landing');
+Route::get('/about', [LandingController::class, 'about'])->name('about');
+Route::get('/services', [LandingController::class, 'services'])->name('services');
+Route::get('/contact', [LandingController::class, 'contact'])->name('contact');
+
 
 // Autentikasi User
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -71,7 +78,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         [TransaksiAdminController::class, 'cetak']
     )->name('admin.transaksi.cetak');
 
-     Route::prefix('kasir')->group(function () {
+    Route::prefix('kasir')->group(function () {
         Route::get('/create', [KasirTransaksiController::class, 'create'])->name('admin.kasir.create');
         Route::post('/store', [KasirTransaksiController::class, 'store'])->name('admin.kasir.store');
     });
