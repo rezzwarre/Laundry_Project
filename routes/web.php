@@ -87,4 +87,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     // Laporan
     Route::get('laporan', [LaporanAdminController::class, 'index'])->name('admin.laporan.index');
     Route::get('laporan/cetak', [LaporanAdminController::class, 'generatePdf'])->name('admin.laporan.generate'); // Untuk men-download/menampilkan laporan
+
+    Route::resource('user_admin', AdminController::class)->names('admin.user_admin');
+    
 });

@@ -49,7 +49,7 @@ class TransaksiFactory extends Factory
 
         // 🔥 LOGIKA BIAYA ANTAR JEMPUT
         $biayaAntarJemput = 0;
-        if ($antarJemput && !in_array($statusKerja, ['Menunggu', 'Dijemput'])) {
+        if ($antarJemput && !in_array($statusKerja, ['Menunggu'])) {
             $biayaAntarJemput = 5000;
         }
 

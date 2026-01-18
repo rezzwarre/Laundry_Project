@@ -16,6 +16,7 @@
                 <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.jenis_jasa.index') }}">Jenis Jasa</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.transaksi.index') }}">Transaksi</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.laporan.index') }}">Laporan</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.user_admin.index') }}">Admin</a></li>
                 <li class="nav-item">
                     <form action="{{ route('admin.logout') }}" method="POST" class="mt-3">
                         @csrf

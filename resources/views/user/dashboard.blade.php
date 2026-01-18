@@ -68,7 +68,7 @@
         <div class="col-md-6 mb-4">
             <div class="card text-center bg-info text-white h-100 shadow">
                 <div class="card-body d-flex flex-column justify-content-center">
-                    <h5 class="card-title">Buat Transaksi Baru</h5>
+                    <h5 class="card-title">Buat Pesanan Baru</h5>
                     <p class="card-text">Pesan layanan laundry Anda sekarang.</p>
                     <a href="{{ route('user.transaksi.create') }}" class="btn btn-light mt-auto">Buat Pesanan</a>
                 </div>

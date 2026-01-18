@@ -47,7 +47,7 @@ class TransaksiUserController extends Controller
      */
     public function store(Request $request)
     {
-
+        
 
         // 1. Validasi Input
         // Jumlah/Berat dan Total Tagihan DIHILANGKAN dari validasi karena diisi Admin

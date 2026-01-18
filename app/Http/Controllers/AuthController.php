@@ -43,11 +43,7 @@ class AuthController extends Controller
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
         ]);
-
         
-
-
-
         // 3. Langsung login setelah registrasi (Opsional)
         Auth::login($user);
 
