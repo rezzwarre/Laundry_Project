@@ -38,7 +38,6 @@ class TransaksiFactory extends Factory
         // Status pengerjaan
         $statusKerja = $this->faker->randomElement([
             'Menunggu',
-            'Dijemput',
             'Diproses',
             'Selesai',
             'Diambil',
