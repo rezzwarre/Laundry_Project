@@ -25,10 +25,10 @@
 		                            No more worries about laundry! Let our professional crew at Freshen Laundry Service take the task off your hands.
 		                        </p>
 		                        <div class="mt-4 pt-3 d-flex align-items-center justify-content-center justify-content-xl-start column-gap-3">
-		                            <a href="{{ asset('javascript:;') }}" class="btn btn-lg btn-primary text-white text-sm fw-semibold" data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
+		                            <a href="javascript:;" class="btn btn-lg btn-primary text-white text-sm fw-semibold" data-aos-delay="200" data-aos="fade" data-aos-duration="3000">
 		                                Contact us
 		                            </a>
-		                            <a href="{{ asset('javascript:;') }}" class="btn btn-lg text-white icon-link icon-link-hover bg-secondary-hover text-sm leading-6 fw-semibold" data-aos-delay="300" data-aos="fade" data-aos-duration="3000">
+		                            <a href="javascript:;" class="btn btn-lg text-white icon-link icon-link-hover bg-secondary-hover text-sm leading-6 fw-semibold" data-aos-delay="300" data-aos="fade" data-aos-duration="3000">
 		                                Learn more 
 		                                <span class="bi align-self-start left-to-right" aria-hidden="true">→</span>
 		                                <span class="bi align-self-start right-to-left" aria-hidden="true">←</span>

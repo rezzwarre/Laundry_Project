@@ -190,17 +190,17 @@
 					                        </svg>
 					                    </li>
 								        <li>
-								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="./blog.html"> 
+								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="#"> 
 								        		Blog page 
 								        	</a>
 								        </li>
 								        <li>
-								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="./blog-post.html"> 
+								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="#"> 
 								        		Blog post 
 								        	</a>
 								        </li>
 								        <li>
-								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="./blog-author.html"> 	Author page 
+								        	<a class="dropdown-item text-body-emphasis bg-body-secondary-hover py-2 text-base leading-6 fw-semibold" href="#"> 	Author page 
 								        	</a>
 								        </li>
 								    </ul>
@@ -208,7 +208,7 @@
 	                        </li>
 
 	                        <li class="nav-item ">
-	                            <a href="./contact.html" class="px-3 text-body-emphasis bg-body-secondary-hover border nav-link rounded-3 text-base leading-6 fw-semibold text-center">
+	                            <a href="#" class="px-3 text-body-emphasis bg-body-secondary-hover border nav-link rounded-3 text-base leading-6 fw-semibold text-center">
 	                                Contact us
 	                            </a>
 	                        </li>
