@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             // UserSeeder::class,
-            // AdminSeeder::class,
+            AdminSeeder::class,
             Jenis_jasaSeeder::class,
             // TransaksiSeeder::class,
             // LaporanSeeder::class,
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
 
 
         User::factory(20)->create();
-        Admin::factory(2)->create();
+        // Admin::factory(2)->create();
 
         // Jenis_jasa::factory(5)->create();
 
